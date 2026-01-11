@@ -3,13 +3,13 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAcXAP8cnKRNBi63nPfIljJM52xbYDKD1I",
-  authDomain: "budgetwise-final.firebaseapp.com",
-  projectId: "budgetwise-final",
-  storageBucket: "budgetwise-final.firebasestorage.app",
-  messagingSenderId: "692188293990",
-  appId: "1:692188293990:web:b5315b62a37972ef5076a7",
-  measurementId: "G-57SJ2WM22Q"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: "budgetwise-4b846.firebaseapp.com",
+  projectId: "budgetwise-4b846",
+  storageBucket: "budgetwise-4b846.firebasestorage.app",
+  messagingSenderId: "53911067852",
+  appId: "1:53911067852:web:42220acba811a675aff669",
+  measurementId: "G-N5CLP2T5WP"
 };
 
 const app = initializeApp(firebaseConfig);

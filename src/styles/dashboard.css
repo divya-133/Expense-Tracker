@@ -6,11 +6,32 @@
   font-family: "Segoe UI", sans-serif;
 }
 
+/* ===== HEADER ===== */
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.insight-btn {
+  padding: 8px 14px;
+  background: #6366f1;
+  color: white;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s ease;
+}
+.insight-btn:hover {
+  background: #4f46e5;
+}
+
 /* ===== TITLE ===== */
 .page-title {
   font-size: 26px;
   font-weight: 700;
-  margin-bottom: 24px;
   color: #111827;
 }
 
@@ -19,7 +40,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 18px;
-  margin-bottom: 10px;
+  margin: 18px 0;
 }
 
 .kpi-card {
@@ -43,26 +64,23 @@
 
 /* ===== ALERT ===== */
 .alert-box {
-  margin: 20px 0 26px;
+  margin: 16px 0 26px;
   padding: 14px 18px;
   border-radius: 10px;
   font-weight: 600;
   font-size: 14px;
   border: 1px solid transparent;
 }
-
 .alert-box.safe {
   background: #ecfdf5;
   color: #16a34a;
   border-color: #bbf7d0;
 }
-
 .alert-box.warning {
   background: #fff7ed;
   color: #f97316;
   border-color: #fed7aa;
 }
-
 .alert-box.danger {
   background: #fef2f2;
   color: #dc2626;
@@ -75,7 +93,6 @@
   grid-template-columns: 1.7fr 1fr;
   gap: 28px;
   margin-bottom: 24px;
-  align-items: stretch;
 }
 
 /* ===== CARDS ===== */
@@ -105,44 +122,87 @@
   justify-content: center;
 }
 
-/* ===== SAVINGS PROGRESS ===== */
-.progress-item {
-  margin-bottom: 18px;
-}
-
-.progress-item p {
-  font-size: 14px;
-  margin-bottom: 6px;
-  color: #374151;
-}
-
-.progress-bar {
-  height: 8px;
-  background: #e5e7eb;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
-  transition: width 0.6s ease;
-}
-
-/* ===== SMART TIP BLOCK ===== */
+/* ===== SMART TIP ===== */
 .info-card p {
   font-size: 14px;
   line-height: 1.45;
   color: #374151;
 }
 
+/* ===== FILTER SECTION (future upgrades) ===== */
+.filter-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.filter-box select,
+.filter-box button {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: white;
+}
+.filter-box button {
+  background: #4f46e5;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ===== TABLE (future upgrades) ===== */
+.txn-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+.txn-table th,
+.txn-table td {
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+.txn-table th {
+  background: #f3f4f6;
+}
+
+/* ===== MODAL ===== */
+.insight-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+.insight-box {
+  background: white;
+  width: 380px;
+  padding: 24px;
+  border-radius: 12px;
+  animation: fadeUp 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+.insight-box h3 { 
+  margin-bottom: 12px; 
+  font-size: 18px;
+  font-weight: 600;
+}
+.insight-box ul { 
+  margin: 10px 0; 
+  padding-left: 18px;
+}
+.insight-box li { 
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
 /* ===== ANIMATION ===== */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: scale(.9) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }

@@ -1,42 +1,44 @@
-import { Doughnut, Line } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale } from "chart.js";
+import { useState } from "react";
+import { Doughnut } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend
+} from "chart.js";
 import { useFinance } from "../context/FinanceContext";
+import MonthlyTrendChart from "../components/MonthlyTrendChart";
 import "../styles/dashboard.css";
 
-ChartJS.register(ArcElement, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 function Dashboard() {
-  const { expenses, budgets, savingsGoals, monthlyTotals } = useFinance();
+  const {
+  expenses = [],
+  budgets = [],
+  incomes = [],
+  savingsGoals = [],
+  monthlyTotals = [] 
+} = useFinance() || {};
+  const [showInsights, setShowInsights] = useState(false);
 
-  /* ===== CALCULATIONS ===== */
+  /* ==== KPI ==== */
   const totalExpenses = expenses.reduce((s, e) => s + e.amount, 0);
-  const totalBudget = budgets.reduce((s, b) => s + b.limit, 0);
+  const totalIncome = incomes.reduce((s, i) => s + i.amount, 0);
+  const balanceLeft = totalIncome - totalExpenses;
 
-  const budgetUsage =
-    totalBudget > 0 ? Math.round((totalExpenses / totalBudget) * 100) : 0;
+  /* ==== Alert ==== */
+  let alertText = "🟢 You're spending safely!";
+  if (totalExpenses > totalIncome) alertText = "🔴 Expenses crossed income!";
+  else if (totalExpenses > totalIncome * 0.8)
+    alertText = "🟡 Warning: expenses nearing income";
 
-  let alertText = "✅ Budget Safe";
-  let alertClass = "safe";
-
-  if (budgetUsage >= 100) {
-    alertText = "❌ Budget Exceeded";
-    alertClass = "danger";
-  } else if (budgetUsage >= 80) {
-    alertText = "⚠️ Warning: High Spending";
-    alertClass = "warning";
-  }
-
-  /* ===== CATEGORY TOTALS ===== */
+  /* ==== Donut Chart ==== */
   const categoryTotals = {};
-  expenses.forEach(e => {
+  expenses.forEach((e) => {
     categoryTotals[e.category] =
       (categoryTotals[e.category] || 0) + e.amount;
   });
-
-  const topCategory =
-    Object.keys(categoryTotals).length > 0
-      ? Object.entries(categoryTotals).sort((a,b) => b[1]-a[1])[0][0]
-      : "None";
 
   const donutData = {
     labels: Object.keys(categoryTotals),
@@ -44,65 +46,92 @@ function Dashboard() {
       {
         data: Object.values(categoryTotals),
         backgroundColor: [
-          "#4f46e5", "#22c55e", "#f97316", "#0ea5e9", "#ef4444"
+          "#4f46e5",
+          "#22c55e",
+          "#f97316",
+          "#0ea5e9",
+          "#ef4444",
+          "#a855f7",
         ],
         borderWidth: 0
       }
     ]
   };
 
-  /* ===== MONTHLY TREND CHART ===== */
-  const lineData = {
-    labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-    datasets: [{
-      label: "Expenses by Month",
-      data: monthlyTotals,
-      borderColor: "#4f46e5",
-      backgroundColor: "rgba(79, 70, 229, 0.15)",
-      tension: 0.35,
-      fill: true
-    }]
-  };
+  /* ==== Auto Insights (basic AI feel) ==== */
+  let insights = [];
 
-  /* ===== SMART TIP ===== */
-  let smartTip = "Great job managing your expenses!";
-  if (topCategory !== "None") {
-    smartTip = `💡 Spend less on ${topCategory} to improve savings.`;
-  }
+  if (totalExpenses > totalIncome)
+    insights.push("⚠ You spent more than you earned this month!");
+  if (balanceLeft > 0)
+    insights.push(`👍 You saved ₹${balanceLeft} this month.`);
+  const topCategory = Object.entries(categoryTotals).sort((a,b) => b[1]-a[1])[0];
+  if (topCategory)
+    insights.push(`💰 Most spent on ${topCategory[0]} (₹${topCategory[1]})`);
+  if (totalExpenses < totalIncome * 0.5)
+    insights.push("👏 Excellent control! Expenses are less than 50% of income.");
 
   return (
     <div className="dashboard">
-      <h2 className="page-title">Dashboard</h2>
+
+      {/* Header Row */}
+      <div className="dashboard-header">
+        <h2 className="page-title">Dashboard</h2>
+        <button className="insight-btn" onClick={() => setShowInsights(true)}>
+          ✨ Monthly Insights
+        </button>
+      </div>
 
       {/* KPI CARDS */}
       <div className="kpi-grid">
-        <div className="kpi-card"><p>Total Expenses</p><h3>₹{totalExpenses}</h3></div>
-        <div className="kpi-card"><p>Budget Usage</p><h3>{budgetUsage}%</h3></div>
-        <div className="kpi-card"><p>Active Savings Goals</p><h3>{savingsGoals.length}</h3></div>
+        <div className="kpi-card">
+          <p>Total Income</p>
+          <h3>₹{totalIncome}</h3>
+        </div>
+        <div className="kpi-card">
+          <p>Total Expenses</p>
+          <h3>₹{totalExpenses}</h3>
+        </div>
+        <div className="kpi-card">
+          <p>Balance Left</p>
+          <h3>₹{balanceLeft}</h3>
+        </div>
       </div>
 
       {/* ALERT */}
-      <div className={`alert-box ${alertClass}`}>{alertText}</div>
+      <div className="alert-box">{alertText}</div>
 
       {/* ANALYTICS */}
       <div className="dashboard-grid">
         <div className="chart-card">
           <h3>Expense Breakdown</h3>
-          <div className="chart-wrapper"><Doughnut data={donutData} /></div>
+          <div className="chart-wrapper">
+            <Doughnut data={donutData} />
+          </div>
         </div>
 
         <div className="chart-card">
-          <h3>Expenses Trend</h3>
-          <div className="chart-wrapper"><Line data={lineData} /></div>
+          <h3>Monthly Trend</h3>
+          <div className="chart-wrapper">
+            <MonthlyTrendChart monthlyTotals={monthlyTotals} />
+          </div>
         </div>
       </div>
 
-      {/* SMART TIP */}
-      <div className="info-card">
-        <h3>Smart Insight</h3>
-        <p>{smartTip}</p>
-      </div>
-
+      {/* POPUP INSIGHTS MODAL */}
+      {showInsights && (
+        <div className="modal-overlay" onClick={() => setShowInsights(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <h3>💡 Monthly Insights</h3>
+            <ul>
+              {insights.map((tip, i) => (
+                <li key={i}>{tip}</li>
+              ))}
+            </ul>
+            <button className="close-btn" onClick={() => setShowInsights(false)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
