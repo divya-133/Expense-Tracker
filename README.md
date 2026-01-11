@@ -60,18 +60,6 @@ BudgetWise is a modern personal finance web application that enables users to tr
 - `onAuthStateChanged` session detection
 - Redirects unauthorized users to login
 
----
 
-## Technology Stack
-
-| Feature | Tools Used |
-|--------|------------|
-| Frontend | React.js, React Router |
-| UI State | React Context API |
-| Charts | Chart.js + react-chartjs-2 |
-| Storage | LocalStorage (Firestore optional) |
-| Authentication | Firebase Auth (Email/Password) |
-| Data Export | CSV generation |
-| Styling | Plain CSS |
 
 
